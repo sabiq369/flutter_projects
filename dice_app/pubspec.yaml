@@ -23,6 +23,10 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
+  fonts:
+    - family: Dancing Script
+      fonts:
+        - asset: fonts/DancingScript-VariableFont_wght.ttf
 
   uses-material-design: true
 

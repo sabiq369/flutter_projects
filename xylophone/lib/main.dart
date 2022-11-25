@@ -27,7 +27,8 @@ class Xylophone extends StatelessWidget {
         },
         child: Text(
           displayNum,
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(
+              color: Colors.black, fontFamily: 'Pacifico', fontSize: 25.0),
         ),
       ),
     );
@@ -40,7 +41,10 @@ class Xylophone extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(
           title: Center(
-            child: Text('Xylophone'),
+            child: Text(
+              'Xylophone',
+              style: TextStyle(fontFamily: 'Pacifico', fontSize: 30.0),
+            ),
           ),
         ),
         body: Column(

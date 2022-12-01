@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'question_brain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+
+QuestionBrain questionBrain = QuestionBrain();
 
 void main() {
   runApp(
@@ -14,6 +18,26 @@ class Quizzler extends StatefulWidget {
 
 class _QuizzlerState extends State<Quizzler> {
   List<Icon> scoreKeeper = [Icon(Icons.check), Icon(Icons.close)];
+  void checkAnswer(bool userPickedAnswer) {
+    setState(() {
+      bool correctAnswer = questionBrain.getAnswer();
+      if (correctAnswer == userPickedAnswer) {
+        print('user answer is correct');
+        scoreKeeper.add(const Icon(
+          Icons.check,
+          color: Colors.green,
+        ));
+      } else {
+        print('user answer is wrong');
+        scoreKeeper.add(const Icon(
+          Icons.close,
+          color: Colors.red,
+        ));
+      }
+
+      questionBrain.nextQuestion();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +54,7 @@ class _QuizzlerState extends State<Quizzler> {
                 flex: 8,
                 child: Center(
                   child: Text(
-                    'sabiq',
+                    questionBrain.getQuestion(),
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -43,12 +67,7 @@ class _QuizzlerState extends State<Quizzler> {
                   foregroundColor: Colors.white,
                 ),
                 onPressed: () {
-                  setState(() {
-                    scoreKeeper.add(const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    ));
-                  });
+                  checkAnswer(true);
                 },
                 child: Text('True'),
               ),
@@ -63,14 +82,9 @@ class _QuizzlerState extends State<Quizzler> {
                   foregroundColor: Colors.white,
                 ),
                 onPressed: () {
-                  setState(() {
-                    scoreKeeper.add(const Icon(
-                      Icons.close,
-                      color: Colors.red,
-                    ));
-                  });
+                  checkAnswer(false);
                 },
-                child: Text('True'),
+                child: Text('False'),
               ),
               SizedBox(
                 height: 30.0,

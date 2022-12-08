@@ -12,3 +12,11 @@ const kLabelStyle = TextStyle(
   color: Color(0xFF8D8E98),
 );
 const kNumberStyle = TextStyle(fontSize: 60.0, fontWeight: FontWeight.bold);
+const kCalculateButton = TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold);
+const kResultPageYourResultText =
+    TextStyle(fontSize: 50.0, fontWeight: FontWeight.bold);
+const kResultPageNormalText =
+    TextStyle(fontSize: 30.0, color: Colors.green, fontWeight: FontWeight.bold);
+const kResultPageNumber =
+    TextStyle(fontSize: 80.0, fontWeight: FontWeight.bold);
+const kResultPageResultText = TextStyle(fontSize: 25.0);

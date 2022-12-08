@@ -1,9 +1,12 @@
-import 'dart:ffi';
-
+import 'package:bmi_calculator/main.dart';
+import 'package:bmi_calculator/screens/result_page.dart';
 import 'package:flutter/material.dart';
-import 'reusable_card.dart';
-import 'icon_content.dart';
-import 'constants.dart';
+import 'package:bmi_calculator/components/reusable_card.dart';
+import 'package:bmi_calculator/components/icon_content.dart';
+import '../constants.dart';
+import '../components/bottom_button.dart';
+import 'package:bmi_calculator/components/round_button.dart';
+import 'package:bmi_calculator/bmi_calculator.dart';
 
 enum Gender { male, female }
 
@@ -144,7 +147,6 @@ class _InputPageState extends State<InputPage> {
                               onPress: () {
                                 setState(() {
                                   weight++;
-                                  print(weight);
                                 });
                               },
                             ),
@@ -154,7 +156,6 @@ class _InputPageState extends State<InputPage> {
                               onPress: () {
                                 setState(() {
                                   weight--;
-                                  print(weight);
                                 });
                               },
                             ),
@@ -211,32 +212,24 @@ class _InputPageState extends State<InputPage> {
               ],
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 10.0),
-            color: kBottomContainerColor,
-            width: kBottomContainerWidth,
-            height: kBottomContainerHeight,
+          BottomButton(
+            text: 'CALCULATOR',
+            onTap: () {
+              CalculateBmi calc = CalculateBmi(height: height, weight: weight);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ResultPage(
+                    bmi: calc.getBmi(),
+                    bmiSuggestion: calc.getSuggestion(),
+                    bmiTextResult: calc.getBmiTextResult(),
+                  ),
+                ),
+              );
+            },
           )
         ],
       ),
     );
-  }
-}
-
-class RoundButton extends StatelessWidget {
-  RoundButton({this.icon, this.onPress});
-  final IconData? icon;
-  final Function()? onPress;
-  @override
-  Widget build(BuildContext context) {
-    return RawMaterialButton(
-        fillColor: Color(0xFF4C4F5E),
-        shape: CircleBorder(),
-        constraints: BoxConstraints.tightFor(
-          width: 56.0,
-          height: 56.0,
-        ),
-        child: Icon(icon),
-        onPressed: onPress);
   }
 }

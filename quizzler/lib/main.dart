@@ -21,7 +21,8 @@ class _QuizzlerState extends State<Quizzler> {
   void checkAnswer(bool userPickedAnswer) {
     setState(() {
       bool correctAnswer = questionBrain.getAnswer();
-      if (correctAnswer == userPickedAnswer) {
+asdfghjkl;''
+          ''      if (correctAnswer == userPickedAnswer) {
         print('user answer is correct');
         scoreKeeper.add(const Icon(
           Icons.check,

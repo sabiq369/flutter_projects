@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final _firestore = FirebaseFirestore.instance;
+late User loggedinUser;
 
 class ChatScreen extends StatefulWidget {
   static const String id = 'ChatScreen';
@@ -14,7 +15,6 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   late String messageText;
   final _auth = FirebaseAuth.instance;
-  late User loggedinUser;
   final messageTextController = TextEditingController();
 
   @override
@@ -25,7 +25,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void getCurrentUser() async {
     try {
-      final user = await _auth.currentUser;
+      final user = _auth.currentUser;
       if (user != null) {
         loggedinUser = user;
         print(loggedinUser.email);
@@ -79,6 +79,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       _firestore.collection('messages').add({
                         'text': messageText,
                         'sender': loggedinUser.email,
+                        'createdAt': FieldValue.serverTimestamp(),
                       });
                       //Implement send functionality.
                     },
@@ -101,7 +102,10 @@ class MessageStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestore.collection('messages').snapshots(),
+      stream: _firestore
+          .collection('messages')
+          .orderBy('createdAt', descending: true)
+          .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(
@@ -115,12 +119,16 @@ class MessageStream extends StatelessWidget {
         for (var message in messages) {
           final messageText = message['text'];
           final messageSender = message['sender'];
-          final messageBubble =
-              MessageBubble(text: messageText, sender: messageSender);
+          final messageBubble = MessageBubble(
+            text: messageText,
+            sender: messageSender,
+            isMe: loggedinUser.email == messageSender,
+          );
           messageBubbles.add(messageBubble);
         }
         return Expanded(
           child: ListView(
+            reverse: true,
             padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
             children: messageBubbles,
           ),
@@ -131,21 +139,37 @@ class MessageStream extends StatelessWidget {
 }
 
 class MessageBubble extends StatelessWidget {
-  const MessageBubble({super.key, this.text, this.sender});
+  const MessageBubble({super.key, this.text, this.sender, this.isMe});
   final String? sender;
   final String? text;
+  final bool? isMe;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(10.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment:
+            isMe! ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          Text('$sender', style: TextStyle(color: Colors.black54)),
+          Text(
+            '$sender',
+            style: TextStyle(color: Colors.black54),
+          ),
           Material(
-            borderRadius: BorderRadius.circular(30.0),
-            color: Colors.blue,
+            borderRadius: isMe!
+                ? BorderRadius.only(
+                    topLeft: Radius.circular(30.0),
+                    bottomLeft: Radius.circular(30.0),
+                    bottomRight: Radius.circular(30.0),
+                  )
+                : BorderRadius.only(
+                    topRight: Radius.circular(30.0),
+                    topLeft: Radius.circular(30.0),
+                    bottomRight: Radius.circular(30.0),
+                  ),
+            color: isMe! ? Colors.blue : Colors.white,
+            elevation: 5.0,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
               child: Text(
